@@ -1,0 +1,6 @@
+.vscode
+plant-data/
+node_modules/
+.DS_Store
+config.js
+.idea/

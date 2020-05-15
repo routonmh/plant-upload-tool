@@ -4,22 +4,21 @@ const path = require("path");
 const xlsx = require('xlsx');
 
 const DATA_DIR = './plant-data';
-const DIRECTORIES = [path.join(DATA_DIR, 'jim'), path.join(DATA_DIR, 'jim')]
+const DIRECTORIES = [path.join(DATA_DIR, 'jim')]
 const RECORD_OFFSET = 1000;
 const PLANT_FILENAME = 'Plant.xlsx';
 const ATTRIBUTE_FILENAME = 'Attribute.xlsx';
 const REGION_SHAPE_FILENAME = 'RegionShapeFile.xlsx';
-const API_HOST = 'http:localhost:5000';
+const API_HOST = 'http://localhost:5000';
 
-const apiKey = require('config').apiKey;
+const apiKey = require('./config').apiKey;
 
-export const axiosAuthenticated = axios.create({
+const axiosAuthenticated = axios.create({
     baseURL: API_HOST,
     headers: {
         "Authorization": apiKey
     }
 });
-
 
 function readDataFile(fp) {
     let wb = xlsx.readFile(fp);
@@ -52,7 +51,7 @@ function createOffsetRecords(dataDir, idx) {
         ScientificName: it.ScientificName,
         PlantDescription: it.Description,
         IsEdible: it.IsEdible
-    }))
+    }));
 
     attributes.map(it => offsetRecords.attributes.push({
         PlantID: it.PlantID + offset,
@@ -77,15 +76,19 @@ async function uploadRecords(offsetRecordSets) {
 
         let recordSet = offsetRecordSets[rsIdx];
         for (let idx = 0; idx < recordSet.plants.length; idx++) {
-            console.log("Submitting plant . . .")
+            console.log("Submitting plant . . .");
             await axios.post(`${API_HOST}/api/plant/add-plant`, recordSet.plants[idx]);
             await sleep(500);
         }
         for (let idx = 0; idx < recordSet.attributes.length; idx++) {
-            console.log("Submitting attribute . . .")
+            console.log("Submitting attribute . . .");
+            await axios.post(`${API_HOST}/api/plant/add-attribute`, recordSet.attributes[idx]);
+            await sleep(500);
         }
         for (let idx = 0; idx < recordSet.regionShapeFiles.length; idx++) {
             console.log("Submitting shape file . . .")
+            await axios.post(`${API_HOST}/api/plant/add-region-shape-file`, recordSet.regionShapeFiles[idx]);
+            await sleep(500);
         }
     }
 }

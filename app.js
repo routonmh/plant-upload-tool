@@ -10,6 +10,7 @@ const PLANT_FILENAME = 'Plant.xlsx';
 const ATTRIBUTE_FILENAME = 'Attribute.xlsx';
 const REGION_SHAPE_FILENAME = 'RegionShapeFile.xlsx';
 const API_HOST = 'http://localhost:5000';
+const REQUEST_MS_DELAY = 50;
 
 const apiKey = require('./config').apiKey;
 
@@ -77,18 +78,42 @@ async function uploadRecords(offsetRecordSets) {
         let recordSet = offsetRecordSets[rsIdx];
         for (let idx = 0; idx < recordSet.plants.length; idx++) {
             console.log("Submitting plant . . .");
-            await axios.post(`${API_HOST}/api/plant/add-plant`, recordSet.plants[idx]);
-            await sleep(500);
+
+            let plant = recordSet.plants[idx];
+            try {
+                await axios.post(`${API_HOST}/api/plant/add-plant`, plant);
+            }
+            catch (ex) {
+                console.log("Failed to submit: ");
+                console.log(plant);
+            }
+            await sleep(REQUEST_MS_DELAY);
         }
         for (let idx = 0; idx < recordSet.attributes.length; idx++) {
             console.log("Submitting attribute . . .");
-            await axios.post(`${API_HOST}/api/plant/add-attribute`, recordSet.attributes[idx]);
-            await sleep(500);
+
+            let attr = recordSet.attributes[idx];
+            try {
+                await axios.post(`${API_HOST}/api/plant/add-attribute`, attr);
+            }
+            catch (ex) {
+                console.log("Failed to submit:")
+                console.log(attr);
+            }
+            await sleep(REQUEST_MS_DELAY);
         }
         for (let idx = 0; idx < recordSet.regionShapeFiles.length; idx++) {
             console.log("Submitting shape file . . .")
-            await axios.post(`${API_HOST}/api/plant/add-region-shape-file`, recordSet.regionShapeFiles[idx]);
-            await sleep(500);
+
+            let shapeFile = recordSet.regionShapeFiles[idx];
+            try {
+                await axios.post(`${API_HOST}/api/plant/add-region-shape-file`, shapeFile);
+            }
+            catch (ex) {
+                console.log("Failed to submit: ")
+                console.log("")
+            }
+            await sleep(REQUEST_MS_DELAY);
         }
     }
 }

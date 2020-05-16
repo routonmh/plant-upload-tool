@@ -9,7 +9,7 @@ const RECORD_OFFSET = 1000;
 const PLANT_FILENAME = 'Plant.xlsx';
 const ATTRIBUTE_FILENAME = 'Attribute.xlsx';
 const REGION_SHAPE_FILENAME = 'RegionShapeFile.xlsx';
-const API_HOST = 'http://localhost:5000';
+const API_HOST = 'http://52.22.252.92';
 const REQUEST_MS_DELAY = 50;
 
 const apiKey = require('./config').apiKey;
